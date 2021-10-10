@@ -22,25 +22,26 @@ function signOut() {
 function execute() {
     return gapi.client.classroom.courses.list({"courseStates":["ACTIVE"]})
         .then((response)=>{
-            console.log("Response", response)
             return response.result
         },(err) => { 
             console.error("Execute error", err) 
         }).then((data)=>{
-            data.courses.forEach(course => {
-                gapi.client.classroom.courses.courseWork.list({"courseId": course.id,"courseWorkStates":["PUBLISHED"]})
-                    .then(value => {
-                        let list = value.result.courseWork.map(work => `<p>${work.title}</p>`).join("")
-                        // console.log(document.querySelector(`#${course.id}`))
-                        document.getElementById(`${course.id}`).innerHTML += list
-                    })
-            })
             let classesContainer = document.querySelector("#classes")
             classesContainer.innerHTML = data.courses.map(course => `
                 <div id="${course.id}">
                 <h1>${course.name}</h1>
                 </div>
                 `).join("")
+
+            data.courses.forEach(course => {
+                gapi.client.classroom.courses.courseWork.list({"courseId": course.id,"courseWorkStates":["PUBLISHED"]})
+                    .then(value => {
+                        console.log(value)
+                        let list = value.result.courseWork.map(work => `<p>${work.title}</p>`).join("")
+                        // console.log(document.querySelector(`#${course.id}`))
+                        document.getElementById(`${course.id}`).innerHTML += list
+                    })
+            })
         });
 }
 
