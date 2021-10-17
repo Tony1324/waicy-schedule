@@ -50,10 +50,16 @@ gapi.load("client:auth2", function() {
         .then((googleAuth)=>{
             if(googleAuth.isSignedIn.get()){
                 loadClient()
+                document.querySelector("#sign-out").hidden = false
             }
             googleAuth.isSignedIn.listen((isSignedIn)=>{
                 if(isSignedIn){
                     loadClient()
+                    document.querySelector("#sign-out").hidden = false
+                    document.querySelector("#log-in").hidden = true
+                }else{
+                    document.querySelector("#sign-out").hidden = true
+                    document.querySelector("#log-in").hidden = false
                 }
             })
         });
