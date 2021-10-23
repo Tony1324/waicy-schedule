@@ -43,3 +43,17 @@ button:active{
 #classes{
     padding: 20px 50px;
 }
+
+
+#classes .work{
+    padding: 15px 10px;
+    margin: 0 -10px;
+    transition: background-color 0.1s;
+    border-radius: 5px;
+}
+
+#classes .work:hover{
+    background-color: var(--background-color-2);
+}
+
+

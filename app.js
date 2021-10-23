@@ -19,17 +19,19 @@ function signOut() {
     gapi.auth2.getAuthInstance().disconnect()
 }
 
-function execute() {
+function execute(){
     return gapi.client.classroom.courses.list({"courseStates":["ACTIVE"]})
         .then((response)=>{
             return response.result
         },(err) => { 
             console.error("Execute error", err) 
         }).then((data)=>{
+            
+            //adds the class headings
             let classesContainer = document.querySelector("#classes")
             classesContainer.innerHTML = data.courses.map(course => `
                 <div id="${course.id}">
-                <h1>${course.name}</h1>
+                <h3>${course.name}</h3>
                 </div>
                 `).join("")
 
@@ -37,8 +39,16 @@ function execute() {
                 gapi.client.classroom.courses.courseWork.list({"courseId": course.id,"courseWorkStates":["PUBLISHED"]})
                     .then(value => {
                         console.log(value)
-                        let list = value.result.courseWork.map(work => `<p>${work.title}</p>`).join("")
-                        // console.log(document.querySelector(`#${course.id}`))
+                        let filtered = value.result.courseWork.filter(work => work.workType=="ASSIGNMENT").filter(work => {
+                            if(work.dueDate == undefined){return false}
+                            // return true
+                            let date = new Date()
+                            date.setFullYear(work.dueDate.year)
+                            date.setMonth(work.dueDate.month-1)
+                            date.setDate(work.dueDate.day)
+                            return date.getTime() > Date.now()
+                        })
+                        let list = filtered.map(work => `<div class="work">${work.title}</div>`).join("")
                         document.getElementById(`${course.id}`).innerHTML += list
                     })
             })
@@ -51,6 +61,7 @@ gapi.load("client:auth2", function() {
             if(googleAuth.isSignedIn.get()){
                 loadClient()
                 document.querySelector("#sign-out").hidden = false
+                document.querySelector("#log-in").hidden = true
             }
             googleAuth.isSignedIn.listen((isSignedIn)=>{
                 if(isSignedIn){
