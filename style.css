@@ -2,7 +2,7 @@
     --background-color-1: white;
     --background-color-2: whitesmoke;
     --accent-color: skyblue;
-    --border: 1px solid rgba(0,0,0,0.1);
+    --border: rgba(0,0,0,0.1);
 }
 
 body {
@@ -15,6 +15,7 @@ nav {
     padding: 10px 50px;
     display:flex;
     align-items: center;
+    border: 1px solid var(--border);
 }
 
 nav button {
@@ -50,10 +51,46 @@ button:active{
     margin: 0 -10px;
     transition: background-color 0.1s;
     border-radius: 5px;
+    display: flex;
+    align-items: center;
 }
 
 #classes .work:hover{
     background-color: var(--background-color-2);
 }
 
+#classes .work p {
+    margin: 0;
+    padding: 0;
+    transform: translateX(-44px);
+    transition: transform 0.2s;
+}
 
+#classes .work button {
+    margin: 0 10px;
+    padding: 4px 4px;
+    width: 25px;
+    height: 25px;
+    border: none;
+    background-color: var(--background-color-1);
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    transform: scale(0);
+    transition: transform 0.2s;
+}
+
+#classes .work:hover button {
+    transform: scale(1);
+}
+
+#classes .work button:hover {
+    transform: scale(1.05);
+}
+
+#classes .work button:active {
+    transform: scale(0.9);
+}
+
+#classes .work:hover p {
+    transform: translateX(0)
+}

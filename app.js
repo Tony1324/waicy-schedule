@@ -48,7 +48,12 @@ function execute(){
                             date.setDate(work.dueDate.day)
                             return date.getTime() > Date.now()
                         })
-                        let list = filtered.map(work => `<div class="work">${work.title}</div>`).join("")
+                        let list = filtered.map(work => 
+                            `<div class="work">
+                            <button onclick="console.log('${work}')">+</button>
+                            <p>${work.title}</p>
+                            </div>`
+                        ).join("")
                         document.getElementById(`${course.id}`).innerHTML += list
                     })
             })
