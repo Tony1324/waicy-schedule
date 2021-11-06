@@ -1,3 +1,16 @@
+//class that contains homework title, classes, time it takes
+class Homework{
+    constructor(title, classes, length){
+        this.title = title
+        this.classes = classes
+        this.length = length
+    }
+}
+
+//set of homework classes
+let today = new Set()
+
+
 function authenticate() {
     return gapi.auth2.getAuthInstance()
         .signIn({scope: "https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.coursework.me.readonly https://www.googleapis.com/auth/classroom.coursework.students.readonly"})
@@ -26,15 +39,8 @@ function execute(){
         },(err) => { 
             console.error("Execute error", err) 
         }).then((data)=>{
-            
-            //adds the class headings
             let classesContainer = document.querySelector("#classes")
-            classesContainer.innerHTML = data.courses.map(course => `
-                <div id="${course.id}">
-                <h3>${course.name}</h3>
-                </div>
-                `).join("")
-
+            classesContainer.innerHTML = ""
             data.courses.forEach(course => {
                 gapi.client.classroom.courses.courseWork.list({"courseId": course.id,"courseWorkStates":["PUBLISHED"]})
                     .then(value => {
@@ -48,13 +54,39 @@ function execute(){
                             date.setDate(work.dueDate.day)
                             return date.getTime() > Date.now()
                         })
-                        let list = filtered.map(work => 
-                            `<div class="work">
-                            <button onclick="console.log('${work}')">+</button>
-                            <p>${work.title}</p>
-                            </div>`
-                        ).join("")
-                        document.getElementById(`${course.id}`).innerHTML += list
+                        if(filtered.length > 0){
+                            let classDiv = document.createElement("div")
+                            classDiv.id = course.id
+                            let className = document.createElement("h3")
+                            className.innerText = course.name
+                            classDiv.appendChild(className)
+                            filtered.forEach(work => {
+                                let workDiv = document.createElement("div")
+                                workDiv.classList.add("work")
+
+                                let addButton = document.createElement("button")
+                                addButton.innerText = "+"
+                                addButton.onclick = () => {
+                                    let homework = new Homework(work.title,course.name,30)
+                                    if(!workDiv.classList.contains("added")){
+                                        today.add(homework)
+                                        addButton.innerText = "-"
+                                        workDiv.classList.add("added")
+                                    }else{
+                                        today.delete(homework)
+                                        addButton.innerText = "+"
+                                        workDiv.classList.remove("added")
+                                    }
+                                }
+                                workDiv.appendChild(addButton, 30)
+
+                                let workName = document.createElement("p")
+                                workName.innerText = work.title
+                                workDiv.appendChild(workName)
+                                classDiv.appendChild(workDiv)
+                            })
+                            classesContainer.appendChild(classDiv)
+                        }
                     })
             })
         });

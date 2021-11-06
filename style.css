@@ -1,7 +1,7 @@
 :root{
     --background-color-1: white;
     --background-color-2: whitesmoke;
-    --accent-color: skyblue;
+    --accent-color: rgb(255,170,6);
     --border: rgba(0,0,0,0.1);
 }
 
@@ -41,10 +41,9 @@ button:active{
     transform: scale(0.96);
 }
 
-#classes{
+#main-container{
     padding: 20px 50px;
 }
-
 
 #classes .work{
     padding: 15px 10px;
@@ -59,11 +58,24 @@ button:active{
     background-color: var(--background-color-2);
 }
 
+#classes .work.added{
+    background-color: var(--accent-color);
+    color: var(--background-color-1)
+}
+
 #classes .work p {
     margin: 0;
     padding: 0;
     transform: translateX(-44px);
-    transition: transform 0.2s;
+    transition: transform 0.3s;
+}
+
+#classes .work:hover p {
+    transform: translateX(0)
+}
+
+#classes .work.added p {
+    transform: translateX(0)
 }
 
 #classes .work button {
@@ -76,7 +88,7 @@ button:active{
     border-radius: 5px;
     border: 1px solid var(--border);
     transform: scale(0);
-    transition: transform 0.2s;
+    transition: transform 0.3s;
 }
 
 #classes .work:hover button {
@@ -91,6 +103,6 @@ button:active{
     transform: scale(0.9);
 }
 
-#classes .work:hover p {
-    transform: translateX(0)
+#classes .work.added button {
+    transform: scale(1)
 }
