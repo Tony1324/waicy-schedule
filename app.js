@@ -66,16 +66,18 @@ function execute(){
 
                                 let addButton = document.createElement("button")
                                 addButton.innerText = "+"
+                                let homework = new Homework(work.title,course.name,30)
                                 addButton.onclick = () => {
-                                    let homework = new Homework(work.title,course.name,30)
                                     if(!workDiv.classList.contains("added")){
                                         today.add(homework)
                                         addButton.innerText = "-"
                                         workDiv.classList.add("added")
+                                        updateToday()
                                     }else{
                                         today.delete(homework)
                                         addButton.innerText = "+"
                                         workDiv.classList.remove("added")
+                                        updateToday()
                                     }
                                 }
                                 workDiv.appendChild(addButton, 30)
@@ -90,6 +92,29 @@ function execute(){
                     })
             })
         });
+}
+
+
+//update list of homework classes in today array on div today
+function updateToday(){
+    let todayContainer = document.querySelector("#today")
+    todayContainer.innerHTML = ""
+    today.forEach(homework => {
+        let homeworkDiv = document.createElement("div")
+        homeworkDiv.classList.add("work")
+        let homeworkName = document.createElement("p")
+        homeworkName.innerText = homework.title
+        homeworkDiv.appendChild(homeworkName)
+        let homeworkClass = document.createElement("p")
+        homeworkClass.classList.add("class")
+        homeworkClass.innerText = homework.classes
+        homeworkDiv.appendChild(homeworkClass)
+        let homeworkLength = document.createElement("p")
+        homeworkLength.classList.add("length")
+        homeworkLength.innerText = homework.length + "min"
+        homeworkDiv.appendChild(homeworkLength)
+        todayContainer.appendChild(homeworkDiv)
+    })
 }
 
 gapi.load("client:auth2", function() {

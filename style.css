@@ -45,7 +45,7 @@ button:active{
     padding: 20px 50px;
 }
 
-#classes .work{
+.work{
     padding: 15px 10px;
     margin: 0 -10px;
     transition: background-color 0.1s;
@@ -54,7 +54,7 @@ button:active{
     align-items: center;
 }
 
-#classes .work:hover{
+.work:hover{
     background-color: var(--background-color-2);
 }
 
@@ -63,9 +63,16 @@ button:active{
     color: var(--background-color-1)
 }
 
-#classes .work p {
+.work p {
     margin: 0;
     padding: 0;
+}
+
+#classes {
+    margin-bottom: 50px;
+}
+
+#classes .work p{
     transform: translateX(-44px);
     transition: transform 0.3s;
 }
@@ -105,4 +112,13 @@ button:active{
 
 #classes .work.added button {
     transform: scale(1)
+}
+
+
+#today .work {
+    gap: 40px;
+}
+
+#today .work .class {
+    opacity: 0.4;
 }
