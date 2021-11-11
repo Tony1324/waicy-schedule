@@ -18,15 +18,16 @@ nav {
     border: 1px solid var(--border);
 }
 
-nav button {
-    height: 3em;
-    margin: 0px 10px;
+nav img {
+    margin-right: 20px;
 }
 
 button {
     font-size: 0.8rem;
     padding: 10px;
-    background-color: white;
+    height: 3em;
+    margin: 0px 10px;
+    background-color: var(--background-color-2);
     border: var(--border);
     margin: 5px;
     border-radius: 5px;
@@ -39,6 +40,12 @@ button:hover{
 
 button:active{
     transform: scale(0.96);
+}
+
+.horizontal{
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 #main-container{
@@ -121,4 +128,10 @@ button:active{
 
 #today .work .class {
     opacity: 0.4;
+}
+
+/* add message if today is empty */
+#today:empty::before{
+    content: "No classes today";
+    opacity: 0.5;
 }

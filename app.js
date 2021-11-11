@@ -8,7 +8,48 @@ class Homework{
 }
 
 //set of homework classes
-let today = new Set()
+
+
+let today = []
+let todayString = localStorage.getItem("today")
+today = JSON.parse(todayString) ?? []
+
+updateToday()
+
+
+let allwork = []
+allworkString = localStorage.getItem("allwork")
+allwork = JSON.parse(allworkString) ?? []
+
+updateAllwork()
+
+//check if homework in today is also in allwork, if not, remove it from today
+function checkToday(){
+    isFound = false
+    today.forEach(homework => {
+        allwork.forEach(classes =>{
+            let found = classes.work.find(work => work.title == homework.title)
+            if(found){
+                isFound = true
+            }
+        })
+        if(!isFound){
+            today = today.filter(twork => twork.title != homework.title)
+            updateToday()
+            }
+    })
+}
+
+checkToday()
+
+
+window.addEventListener("unload", ()=>{
+    let todayString = JSON.stringify(today)
+    localStorage.setItem("today", todayString)
+
+    let allworkString = JSON.stringify(allwork)
+    localStorage.setItem("allwork", allworkString)
+})
 
 
 function authenticate() {
@@ -22,7 +63,9 @@ function loadClient() {
     return gapi.client.load("https://classroom.googleapis.com/$discovery/rest?version=v1")
         .then(()=>{
             console.log("GAPI client loaded for API"); 
-            execute()
+            //show refresh button
+            let refreshButton = document.querySelector("#refresh")
+            refreshButton.hidden = false
         },(err)=>{
             console.error("Error loading GAPI client for API", err); 
         });
@@ -41,6 +84,7 @@ function execute(){
         }).then((data)=>{
             let classesContainer = document.querySelector("#classes")
             classesContainer.innerHTML = ""
+            allwork = []
             data.courses.forEach(course => {
                 gapi.client.classroom.courses.courseWork.list({"courseId": course.id,"courseWorkStates":["PUBLISHED"]})
                     .then(value => {
@@ -60,21 +104,30 @@ function execute(){
                             let className = document.createElement("h3")
                             className.innerText = course.name
                             classDiv.appendChild(className)
+
+                            let classObj = {name:course.name,work:[]}
+
                             filtered.forEach(work => {
+                                classObj.work.push(work)
                                 let workDiv = document.createElement("div")
                                 workDiv.classList.add("work")
 
                                 let addButton = document.createElement("button")
                                 addButton.innerText = "+"
                                 let homework = new Homework(work.title,course.name,30)
+                                if(today.some(twork => twork.title == homework.title)){
+                                    
+                                    console.log(today,homework.title)
+                                    workDiv.classList.add("added")
+                                }
                                 addButton.onclick = () => {
                                     if(!workDiv.classList.contains("added")){
-                                        today.add(homework)
+                                        today.push(homework)
                                         addButton.innerText = "-"
                                         workDiv.classList.add("added")
                                         updateToday()
                                     }else{
-                                        today.delete(homework)
+                                        today = today.filter(twork => twork.title != homework.title)
                                         addButton.innerText = "+"
                                         workDiv.classList.remove("added")
                                         updateToday()
@@ -87,6 +140,7 @@ function execute(){
                                 workDiv.appendChild(workName)
                                 classDiv.appendChild(workDiv)
                             })
+                            allwork.push(classObj)
                             classesContainer.appendChild(classDiv)
                         }
                     })
@@ -114,6 +168,51 @@ function updateToday(){
         homeworkLength.innerText = homework.length + "min"
         homeworkDiv.appendChild(homeworkLength)
         todayContainer.appendChild(homeworkDiv)
+    })
+}
+
+//update all work with allwork array
+function updateAllwork(){
+    let allworkContainer = document.querySelector("#classes")
+    allworkContainer.innerHTML = ""
+    allwork.forEach(classObj => {
+        let classDiv = document.createElement("div")
+        classDiv.id = classObj.name
+        let className = document.createElement("h3")
+        className.innerText = classObj.name
+        classDiv.appendChild(className)
+        classObj.work.forEach(work => {
+            let workDiv = document.createElement("div")
+            workDiv.classList.add("work")
+            let addButton = document.createElement("button")
+            addButton.innerText = "+"
+            let homework = new Homework(work.title,classObj.name,30)
+            if(today.some(twork => twork.title == homework.title)){
+                
+                console.log(today,homework.title)
+                workDiv.classList.add("added")
+            }
+            addButton.onclick = () => {
+                if(!workDiv.classList.contains("added")){
+                    today.push(homework)
+                    addButton.innerText = "-"
+                    workDiv.classList.add("added")
+                    updateToday()
+                }else{
+                    today = today.filter(twork => twork.title != homework.title)
+                    addButton.innerText = "+"
+                    workDiv.classList.remove("added")
+                    updateToday()
+                }
+            }
+            workDiv.appendChild(addButton, 30)
+
+            let workName = document.createElement("p")
+            workName.innerText = work.title
+            workDiv.appendChild(workName)
+            classDiv.appendChild(workDiv)
+        })
+        allworkContainer.appendChild(classDiv)
     })
 }
 

@@ -5,22 +5,27 @@
         <meta name="viewport" content="width=device-width" />
         <title>Hello</title>
         <script src="https://apis.google.com/js/api.js"></script>
-        <script src="app.js"></script>
+        <script defer src="app.js"></script>
         <link rel="stylesheet" href="style.css">
+        <!-- logo png -->
+        <link rel="icon" href="Logo.png">
     </head>
     <body>
         <nav>
+            <img src="Logo.png" width="50px" height="50px" alt=""/>
             <h1>Janus</h1>
-            <button id="log-in" onclick="authenticate().then(loadClient)">Log In</button>
-            <button hidden id="sign-out" onclick="signOut()">Sign Out</button>
         </nav>
 
         <div id="main-container">
             <h1>Today</h1>
-            <div id="today">
-
+            <div id="today"></div>
+            <div class="horizontal">
+                <h1>Classes</h1>
+                <button id="refresh" hidden onclick="execute()">refresh</button>
+                <button id="log-in" onclick="authenticate().then(loadClient)">Log In</button>
+                <button hidden id="sign-out" onclick="signOut()">Sign Out</button>
+                
             </div>
-            <h1>Classes</h1>
             <div id="classes">
             
             </div>
