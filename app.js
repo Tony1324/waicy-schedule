@@ -1,9 +1,10 @@
 //class that contains homework title, classes, time it takes
 class Homework{
-    constructor(title, classes, length){
+    constructor(title, classes, length, difficulty){
         this.title = title
         this.classes = classes
         this.length = length
+        this.difficulty = difficulty
     }
 }
 
@@ -96,58 +97,22 @@ function execute(){
                             date.setFullYear(work.dueDate.year)
                             date.setMonth(work.dueDate.month-1)
                             date.setDate(work.dueDate.day)
-                            return date.getTime() > Date.now()
+                            return (date.getTime() > Date.now() && date.getTime() < Date.now()+604800000)
                         })
                         if(filtered.length > 0){
-                            let classDiv = document.createElement("div")
-                            classDiv.id = course.id
-                            let className = document.createElement("h3")
-                            className.innerText = course.name
-                            classDiv.appendChild(className)
-
                             let classObj = {name:course.name,work:[]}
-
                             filtered.forEach(work => {
-                                classObj.work.push(work)
-                                let workDiv = document.createElement("div")
-                                workDiv.classList.add("work")
-
-                                let addButton = document.createElement("button")
-                                addButton.innerText = "+"
-                                let homework = new Homework(work.title,course.name,30)
-                                if(today.some(twork => twork.title == homework.title)){
-                                    
-                                    console.log(today,homework.title)
-                                    workDiv.classList.add("added")
-                                }
-                                addButton.onclick = () => {
-                                    if(!workDiv.classList.contains("added")){
-                                        today.push(homework)
-                                        addButton.innerText = "-"
-                                        workDiv.classList.add("added")
-                                        updateToday()
-                                    }else{
-                                        today = today.filter(twork => twork.title != homework.title)
-                                        addButton.innerText = "+"
-                                        workDiv.classList.remove("added")
-                                        updateToday()
-                                    }
-                                }
-                                workDiv.appendChild(addButton, 30)
-
-                                let workName = document.createElement("p")
-                                workName.innerText = work.title
-                                workDiv.appendChild(workName)
-                                classDiv.appendChild(workDiv)
+                                let homework = new Homework(work.title, classObj.name, 30, "medium")
+                                classObj.work.push(homework)
                             })
                             allwork.push(classObj)
-                            classesContainer.appendChild(classDiv)
+
+                            createAllworkElements(classObj)
                         }
                     })
             })
         });
 }
-
 
 //update list of homework classes in today array on div today
 function updateToday(){
@@ -176,44 +141,81 @@ function updateAllwork(){
     let allworkContainer = document.querySelector("#classes")
     allworkContainer.innerHTML = ""
     allwork.forEach(classObj => {
-        let classDiv = document.createElement("div")
-        classDiv.id = classObj.name
-        let className = document.createElement("h3")
-        className.innerText = classObj.name
-        classDiv.appendChild(className)
-        classObj.work.forEach(work => {
-            let workDiv = document.createElement("div")
-            workDiv.classList.add("work")
-            let addButton = document.createElement("button")
-            addButton.innerText = "+"
-            let homework = new Homework(work.title,classObj.name,30)
-            if(today.some(twork => twork.title == homework.title)){
-                
-                console.log(today,homework.title)
-                workDiv.classList.add("added")
-            }
-            addButton.onclick = () => {
-                if(!workDiv.classList.contains("added")){
-                    today.push(homework)
-                    addButton.innerText = "-"
-                    workDiv.classList.add("added")
-                    updateToday()
-                }else{
-                    today = today.filter(twork => twork.title != homework.title)
-                    addButton.innerText = "+"
-                    workDiv.classList.remove("added")
-                    updateToday()
-                }
-            }
-            workDiv.appendChild(addButton, 30)
-
-            let workName = document.createElement("p")
-            workName.innerText = work.title
-            workDiv.appendChild(workName)
-            classDiv.appendChild(workDiv)
-        })
-        allworkContainer.appendChild(classDiv)
+        createAllworkElements(classObj);
     })
+}
+
+function createAllworkElements(classObj){
+    let allworkContainer = document.querySelector("#classes")
+
+    let classDiv = document.createElement("div")
+    classDiv.id = classObj.name
+    let className = document.createElement("h3")
+    className.innerText = classObj.name
+    classDiv.appendChild(className)
+    classObj.work.forEach(work => {
+        let workDiv = document.createElement("div")
+        workDiv.classList.add("work")
+        let addButton = document.createElement("button")
+        addButton.innerText = "+"
+        let homework = new Homework(work.title,classObj.name,30)
+        if(today.some(twork => twork.title == homework.title)){
+
+            console.log(today,homework.title)
+            workDiv.classList.add("added")
+        }
+        addButton.onclick = () => {
+            if(!workDiv.classList.contains("added")){
+                today.push(homework)
+                addButton.innerText = "-"
+                workDiv.classList.add("added")
+                updateToday()
+            }else{
+                today = today.filter(twork => twork.title != homework.title)
+                addButton.innerText = "+"
+                workDiv.classList.remove("added")
+                updateToday()
+            }
+        }
+        workDiv.appendChild(addButton)
+
+        let workName = document.createElement("p")
+        workName.innerText = work.title
+        workDiv.appendChild(workName)
+
+        //add a select input with difficulties easy, medium, hard
+        let select = document.createElement("select")
+        let easy = document.createElement("option")
+        easy.value = "easy"
+        easy.innerText = "easy"
+        let medium = document.createElement("option")
+        medium.value = "medium"
+        medium.innerText = "medium"
+        let hard = document.createElement("option")
+        hard.value = "hard"
+        hard.innerText = "hard"
+        select.appendChild(easy)
+        select.appendChild(medium)
+        select.appendChild(hard)
+        //show default difficulty based on work object 
+        if(work.difficulty == "easy"){
+            easy.selected = true
+        }else if(work.difficulty == "medium"){
+            medium.selected = true
+        }else if(work.difficulty == "hard"){
+            hard.selected = true
+        }
+        //set difficulty of work object when select input is changed
+        select.onchange = () => {
+            work.difficulty = select.value
+        }
+
+        workDiv.appendChild(select)
+
+        classDiv.appendChild(workDiv)
+    })
+    allworkContainer.appendChild(classDiv)
+
 }
 
 gapi.load("client:auth2", function() {

@@ -54,7 +54,7 @@ button:active{
 
 .work{
     padding: 15px 10px;
-    margin: 0 -10px;
+    margin: 2px -10px;
     transition: background-color 0.1s;
     border-radius: 5px;
     display: flex;
@@ -91,6 +91,32 @@ button:active{
 #classes .work.added p {
     transform: translateX(0)
 }
+
+#classes .work select{
+    height: 30px;
+    padding: 5px 10px;
+    margin: 0 10px;
+    border-radius: 5px;
+    background-color: var(--background-color-1);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: var(--border);
+
+    opacity: 0;
+    transition: opacity 0.2s;
+
+}
+
+#classes .work:hover select {
+    opacity: 1;
+}
+
+
+#classes .work.added select {
+    opacity: 1;
+}
+
 
 #classes .work button {
     margin: 0 10px;
